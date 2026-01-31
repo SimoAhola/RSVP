@@ -27,7 +27,11 @@ class UltimateRSVPReader:
         self.setup_ui()
         
         # Keyboard shortcuts
-        self.root.bind("<space>", self.toggle_play)
+        self.root.bind_all("<space>", self.on_space_key)
+
+    def on_space_key(self, event):
+        self.toggle_play()
+        return "break"  # Prevent default behavior (adding space to text)
 
     def setup_ui(self):
         # Header & Instructions
