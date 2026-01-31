@@ -25,6 +25,9 @@ class UltimateRSVPReader:
         self.advanced_visible = False
 
         self.setup_ui()
+        
+        # Keyboard shortcuts
+        self.root.bind("<space>", self.toggle_play)
 
     def setup_ui(self):
         # Header & Instructions
