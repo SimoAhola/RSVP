@@ -27,15 +27,7 @@ class UltimateRSVPReader:
         self.setup_ui()
         
         # Keyboard shortcuts
-        self.root.bind_all("<space>", self.on_space_key)
-
-    def on_space_key(self, event):
-        focused_widget = self.root.focus_get()
-        # Check if focus is on the text input widget (ScrolledText's inner Text widget)
-        is_text_input_focused = isinstance(focused_widget, tk.Text)
-        if not is_text_input_focused:
-            self.toggle_play()
-            return "break"  # Prevent default behavior (adding space to text)
+        self.root.bind("<space>", lambda e: self.toggle_play() or "break")
 
     def setup_ui(self):
         # Header & Instructions
@@ -51,6 +43,9 @@ class UltimateRSVPReader:
             insertbackground="white", highlightthickness=1, highlightbackground="#333"
         )
         self.text_input.pack(pady=10)
+        
+        # Bind space key on text input to insert space and stop propagation
+        self.text_input.bind("<space>", lambda e: self.text_input.insert("insert", " ") or "break")
         
         # Text Highlight Configuration
         self.text_input.tag_config("highlight", background="#333333", foreground=self.accent_green, font=("Consolas", 10, "bold"))
