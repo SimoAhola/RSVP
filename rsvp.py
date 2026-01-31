@@ -28,6 +28,9 @@ class UltimateRSVPReader:
         
         # Keyboard shortcuts - global space for play/pause (works when not in text field)
         self.root.bind("<KeyPress-space>", lambda e: self.handle_space_key())
+        
+        # Remove focus from text input when clicking anywhere outside it
+        self.root.bind("<Button-1>", self.on_background_click)
 
     def setup_ui(self):
         # Header & Instructions
@@ -263,6 +266,13 @@ class UltimateRSVPReader:
         """Handle reset button click and defocus text input"""
         self.root.focus()
         self.reset_reader()
+
+    def on_background_click(self, event):
+        """Remove focus from text input when clicking outside it"""
+        widget = event.widget
+        # If the click is not on the text input, remove focus
+        if widget != self.text_input:
+            self.root.focus()
 
 if __name__ == "__main__":
     root = tk.Tk()
