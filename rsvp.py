@@ -30,8 +30,11 @@ class UltimateRSVPReader:
         self.root.bind_all("<space>", self.on_space_key)
 
     def on_space_key(self, event):
-        self.toggle_play()
-        return "break"  # Prevent default behavior (adding space to text)
+        if self.text_input != self.root.focus_get():
+            self.toggle_play()
+            return "break"  # Prevent default behavior (adding space to text)
+        else:
+            pass  # Allow normal space typing in text field
 
     def setup_ui(self):
         # Header & Instructions
