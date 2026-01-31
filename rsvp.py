@@ -22,6 +22,7 @@ class UltimateRSVPReader:
         self.is_playing = False
         self.after_id = None
         self.search_start_index = "1.0"  # Track position in text widget
+        self.advanced_visible = False
 
         self.setup_ui()
 
@@ -78,6 +79,42 @@ class UltimateRSVPReader:
         self.speed_slider.set(400)
         self.speed_slider.pack(pady=5)
 
+        # Advanced Settings Toggle
+        self.adv_btn = tk.Button(
+            self.root, text="▼ Advanced Settings", command=self.toggle_advanced,
+            bg=self.bg_main, fg=self.accent_green, font=("Arial", 9, "bold"), borderwidth=0, cursor="hand2", activebackground=self.bg_main, activeforeground=self.text_main
+        )
+        self.adv_btn.pack(pady=10)
+
+        # Advanced Settings Frame (Hidden by default)
+        self.adv_frame = tk.Frame(self.root, bg=self.bg_main)
+        
+        # Punctuation Delays
+        tk.Label(self.adv_frame, text="Punctuation Delays", bg=self.bg_main, fg=self.text_main, font=("Arial", 9, "bold")).grid(row=0, column=0, columnspan=2, pady=(0, 5))
+        
+        tk.Label(self.adv_frame, text="End Sentence (. ! ?)", bg=self.bg_main, fg="#AAA", font=("Arial", 8)).grid(row=1, column=0, sticky="e", padx=5)
+        self.punct_major_scale = tk.Scale(self.adv_frame, from_=1.0, to=5.0, resolution=0.1, orient="horizontal", length=150, bg=self.bg_main, fg=self.text_main, highlightthickness=0, troughcolor="#222", activebackground=self.accent_green)
+        self.punct_major_scale.set(2.5)
+        self.punct_major_scale.grid(row=1, column=1, sticky="w")
+
+        tk.Label(self.adv_frame, text="Mid Sentence (, ; :)", bg=self.bg_main, fg="#AAA", font=("Arial", 8)).grid(row=2, column=0, sticky="e", padx=5)
+        self.punct_minor_scale = tk.Scale(self.adv_frame, from_=1.0, to=3.0, resolution=0.1, orient="horizontal", length=150, bg=self.bg_main, fg=self.text_main, highlightthickness=0, troughcolor="#222", activebackground=self.accent_green)
+        self.punct_minor_scale.set(1.5)
+        self.punct_minor_scale.grid(row=2, column=1, sticky="w")
+
+        # Long Word Delays
+        tk.Label(self.adv_frame, text="Long Word Delays", bg=self.bg_main, fg=self.text_main, font=("Arial", 9, "bold")).grid(row=0, column=2, columnspan=2, pady=(0, 5), padx=(20, 0))
+
+        tk.Label(self.adv_frame, text="> 9 Chars", bg=self.bg_main, fg="#AAA", font=("Arial", 8)).grid(row=1, column=2, sticky="e", padx=5)
+        self.long_word_scale = tk.Scale(self.adv_frame, from_=1.0, to=3.0, resolution=0.1, orient="horizontal", length=150, bg=self.bg_main, fg=self.text_main, highlightthickness=0, troughcolor="#222", activebackground=self.accent_green)
+        self.long_word_scale.set(1.4)
+        self.long_word_scale.grid(row=1, column=3, sticky="w")
+
+        tk.Label(self.adv_frame, text="> 6 Chars", bg=self.bg_main, fg="#AAA", font=("Arial", 8)).grid(row=2, column=2, sticky="e", padx=5)
+        self.med_word_scale = tk.Scale(self.adv_frame, from_=1.0, to=2.0, resolution=0.1, orient="horizontal", length=150, bg=self.bg_main, fg=self.text_main, highlightthickness=0, troughcolor="#222", activebackground=self.accent_green)
+        self.med_word_scale.set(1.1)
+        self.med_word_scale.grid(row=2, column=3, sticky="w")
+
         # Buttons
         self.btn_frame = tk.Frame(self.root, bg=self.bg_main)
         self.btn_frame.pack(pady=20)
@@ -93,6 +130,18 @@ class UltimateRSVPReader:
             bg="#424242", fg="white", font=("Arial", 10), borderwidth=0, cursor="hand2"
         )
         self.reset_btn.grid(row=0, column=1, padx=10)
+
+    def toggle_advanced(self):
+        if self.advanced_visible:
+            self.adv_frame.pack_forget()
+            self.adv_btn.config(text="▼ Advanced Settings")
+            self.root.geometry("700x650")
+            self.advanced_visible = False
+        else:
+            self.adv_frame.pack(pady=10)
+            self.adv_btn.config(text="▲ Advanced Settings")
+            self.root.geometry("700x800")
+            self.advanced_visible = True
 
     def get_orp_parts(self, word):
         if not word: return "", "", ""
@@ -144,15 +193,15 @@ class UltimateRSVPReader:
 
             # Punctuation pauses
             if current_word.endswith(('.', '!', '?')):
-                base_delay = int(base_delay * 2.5)
+                base_delay = int(base_delay * self.punct_major_scale.get())
             elif current_word.endswith((',', ';', ':')):
-                base_delay = int(base_delay * 1.5)
+                base_delay = int(base_delay * self.punct_minor_scale.get())
             
             # Long word slowdown
             if len(current_word) > 9:
-                base_delay = int(base_delay * 1.4)
+                base_delay = int(base_delay * self.long_word_scale.get())
             elif len(current_word) > 6:
-                base_delay = int(base_delay * 1.1)
+                base_delay = int(base_delay * self.med_word_scale.get())
 
             self.after_id = self.root.after(base_delay, self.animate)
         elif self.current_index >= len(self.words) and len(self.words) > 0:
