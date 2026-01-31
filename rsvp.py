@@ -26,8 +26,8 @@ class UltimateRSVPReader:
 
         self.setup_ui()
         
-        # Keyboard shortcuts
-        self.root.bind("<space>", lambda e: self.toggle_play() or "break")
+        # Keyboard shortcuts - global space for play/pause (works when not in text field)
+        self.root.bind("<KeyPress-space>", lambda e: self.handle_space_key())
 
     def setup_ui(self):
         # Header & Instructions
@@ -126,13 +126,13 @@ class UltimateRSVPReader:
         self.btn_frame.pack(pady=20)
 
         self.play_btn = tk.Button(
-            self.btn_frame, text="START READING", width=20, height=2, command=self.toggle_play,
+            self.btn_frame, text="START READING", width=20, height=2, command=self.on_play_button_click,
             bg=self.accent_green, fg="white", font=("Arial", 10, "bold"), borderwidth=0, cursor="hand2"
         )
         self.play_btn.grid(row=0, column=0, padx=10)
 
         self.reset_btn = tk.Button(
-            self.btn_frame, text="RESET", width=15, height=2, command=self.reset_reader,
+            self.btn_frame, text="RESET", width=15, height=2, command=self.on_reset_button_click,
             bg="#424242", fg="white", font=("Arial", 10), borderwidth=0, cursor="hand2"
         )
         self.reset_btn.grid(row=0, column=1, padx=10)
@@ -247,6 +247,22 @@ class UltimateRSVPReader:
         self.suffix_label.config(text="")
         self.update_progress()
         self.play_btn.config(text="START READING", bg=self.accent_green)
+
+    def handle_space_key(self):
+        """Handle space key press for play/pause"""
+        if self.root.focus_get() != self.text_input:
+            self.toggle_play()
+        return "break"
+
+    def on_play_button_click(self):
+        """Handle play button click and defocus text input"""
+        self.root.focus()
+        self.toggle_play()
+
+    def on_reset_button_click(self):
+        """Handle reset button click and defocus text input"""
+        self.root.focus()
+        self.reset_reader()
 
 if __name__ == "__main__":
     root = tk.Tk()
