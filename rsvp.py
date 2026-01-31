@@ -30,11 +30,12 @@ class UltimateRSVPReader:
         self.root.bind_all("<space>", self.on_space_key)
 
     def on_space_key(self, event):
-        if self.text_input != self.root.focus_get():
+        focused_widget = self.root.focus_get()
+        # Check if focus is on the text input widget (ScrolledText's inner Text widget)
+        is_text_input_focused = isinstance(focused_widget, tk.Text)
+        if not is_text_input_focused:
             self.toggle_play()
             return "break"  # Prevent default behavior (adding space to text)
-        else:
-            pass  # Allow normal space typing in text field
 
     def setup_ui(self):
         # Header & Instructions
