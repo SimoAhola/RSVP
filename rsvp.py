@@ -82,9 +82,9 @@ class UltimateRSVPReader:
         # Advanced Settings Toggle
         self.adv_btn = tk.Button(
             self.root, text="▼ Advanced Settings", command=self.toggle_advanced,
-            bg=self.bg_main, fg="#888", font=("Arial", 8), borderwidth=0, cursor="hand2", activebackground=self.bg_main, activeforeground=self.text_main
+            bg=self.bg_main, fg=self.accent_green, font=("Arial", 9, "bold"), borderwidth=0, cursor="hand2", activebackground=self.bg_main, activeforeground=self.text_main
         )
-        self.adv_btn.pack(pady=5)
+        self.adv_btn.pack(pady=10)
 
         # Advanced Settings Frame (Hidden by default)
         self.adv_frame = tk.Frame(self.root, bg=self.bg_main)
